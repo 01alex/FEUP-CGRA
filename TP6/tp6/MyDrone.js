@@ -46,6 +46,7 @@ MyDrone.prototype.initBuffers = function() {
 	this.scene.popMatrix();
 };*/
 
+/*
 MyDrone.prototype.update = function(currTime){
 	if(this.lastUpdate == -1)
 		this.lastUpdate = currTime;
@@ -54,7 +55,7 @@ MyDrone.prototype.update = function(currTime){
 
 
 	this.lastUpdate = currTime;
-};
+};*/
 
 MyDrone.prototype.rotateLeft = function(speed){
 	this.yRot += speed * degToRad;
@@ -67,18 +68,48 @@ MyDrone.prototype.rotateRight = function(speed){
 MyDrone.prototype.moveForward = function(speed){
 	this.x += Math.sin(this.yRot) * (speed / 15);
 	this.z += Math.cos(this.yRot) * (speed / 15);
+
+	if(this.x >= 0)
+		this.x = 0;
+	
+	if(this.z >= 0)
+		this.z = 0;
+
+	if(this.x <= -15)
+		this.x = -15;
+
+	if(this.z <= -15)
+		this.z = -15;
 }
 
 MyDrone.prototype.moveBack = function(speed){
 	this.x -= Math.sin(this.yRot) * (speed / 15);
 	this.z -= Math.cos(this.yRot) * (speed / 15);
+
+	if(this.x >= 0)
+		this.x = 0;
+	
+	if(this.z >= 0)
+		this.z = 0;
+
+	if(this.x <= -15)
+		this.x = -15;
+
+	if(this.z <= -15)
+		this.z = -15;
 }
 
 MyDrone.prototype.moveUp = function(speed){
-	this.y += (speed / 15);	
+	this.y += (speed / 15);
+
+	if(this.y >= 7.8)		//7.5 de altura da cena + 0.3 de altura por defeito do drone
+		this.y = 7.8;
 }
 
 MyDrone.prototype.moveDown = function(speed){
 	this.y -= (speed / 15);
+
+	if(this.y <= 0)
+		this.y = 0;
 }
 
