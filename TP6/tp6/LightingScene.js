@@ -306,10 +306,11 @@ LightingScene.prototype.display = function() {
 	//Drone
 	this.pushMatrix();
 	this.rotate(180 * degToRad, 0, 1, 0);
-	this.translate(-7.5 - Math.sin(15*degToRad), 0, -8.5);
-	this.rotate(15 * degToRad, 0 , 1 ,0);
+	this.translate(this.drone.x, this.drone.y, this.drone.z);
+	this.rotate(this.drone.yRot, 0 , 1 ,0);
 	this.drone.display();
 	this.popMatrix();
+
 
 	// ---- END Primitive drawing section
 
@@ -319,6 +320,7 @@ LightingScene.prototype.update = function(currTime){
 
 	this.clock.update(currTime);
 	this.paperPlane.update(currTime);
+	//this.drone.update(currTime);
 
 };
 

@@ -70,24 +70,19 @@
 MyPaperPlane.prototype.update = function(currTime) {
 	if (this.lastUpdate == -1)
 		this.lastUpdate = currTime;
-	else if (this.xTranslation > 0.9 && this.elapsedTime > 1000) {
-		var diff = currTime - this.lastUpdate;
-		this.lastUpdate = currTime;
 
+	var diff = currTime - this.lastUpdate;
+
+	if (this.xTranslation > 0.9 && this.elapsedTime > 1000) {
 		this.xTranslation -= (diff * (7/1000));
 		this.yTranslation += (diff * (0.8/1000));
 	}
 	else if (this.yTranslation > 0.2 && this.elapsedTime > 1000) {
-		var diff = currTime - this.lastUpdate;
-		this.lastUpdate = currTime;
-
 		this.yTranslation -= (diff *(7/1000));
 		this.rotZ -= (diff * 245/1000);
 		this.rotX -= (diff * 500/1000);
 	}
-	else {
-		var diff = currTime - this.lastUpdate;
-		this.lastUpdate = currTime;
-		this.elapsedTime += diff;
-	}
+	else this.elapsedTime += diff;
+
+	this.lastUpdate = currTime;
 }
