@@ -40,6 +40,8 @@ function MyClock(scene, slices, stacks){
 	this.materialMetal.setDiffuse(0.24,0.24,0.24,1);
 	this.materialMetal.setSpecular(0.5,0.5,0.5,1);	
 	this.materialMetal.setShininess(120);
+
+	this.anim =true;
 };
 
 MyClock.prototype = Object.create(CGFobject.prototype);

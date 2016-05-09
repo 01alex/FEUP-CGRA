@@ -38,7 +38,7 @@ LightingScene.prototype.init = function(application) {
 	this.boardB = new Plane(this,0, 1, 0, 1, BOARD_B_DIVISIONS);
 	this.prism = new MyPrism(this, 8, 20);
 	this.cylinder = new MyCylinder(this, 8, 20);
-	this.lamp = new MyLamp(this, 25, 19);
+	//this.lamp = new MyLamp(this, 25, 19);
 	this.clock = new MyClock(this, 12, 1);
 	this.paperPlane = new MyPaperPlane(this, 12, 8);
 	this.drone = new MyDrone(this);
@@ -58,7 +58,6 @@ LightingScene.prototype.init = function(application) {
 	this.materialB.setDiffuse(0.6,0.6,0.6,1);
 	this.materialB.setSpecular(0.8,0.8,0.8,1);	
 	this.materialB.setShininess(120);
-
 	
 	this.materialFloor = new CGFappearance(this);
 	this.materialFloor.setAmbient(0.25,0.25,0.25,1);
@@ -123,11 +122,11 @@ LightingScene.prototype.init = function(application) {
 
 	this.setUpdatePeriod(10);
 
-	this.option1 = true;
-	this.option2 = false;
+	//this.option1 = true;
+	//this.option2 = false;
 	this.speed = 3;
 
-	};
+};
 
 
 
@@ -136,50 +135,70 @@ LightingScene.prototype.initCameras = function() {
 };
 
 LightingScene.prototype.initLights = function() {
+
 	this.setGlobalAmbientLight(0.4,0.4,0.4,0.4);
-	
+
 	// Positions for four lights
-	this.lights[0].setPosition(16, 5, 16, 1);
-	this.lights[1].setPosition(10, 10, 6.0, 1.0);
-	this.lights[2].setPosition(5, 5, 5, 8.0);
-	this.lights[3].setPosition(10, 5.0, 5.0, 1.0);
+	this.lights[0].setPosition(4, 6, 1, 1);
+	this.Luz1 = true;
+
+	this.lights[1].setPosition(10.5, 6, 1, 1);
+	this.Luz2 = true;
+
+	this.lights[2].setPosition(10.5, 6, 12, 1);
+	this.Luz3 = true;
+
+	this.lights[3].setPosition(4, 6, 12, 1);
+	this.Luz4 = true;
 
 
 	this.lights[0].setAmbient(0, 0, 0, 1);
 	this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
-	this.lights[0].setSpecular(1,1,1,1);
-	this.lights[0].setConstantAttenuation(0);
-	this.lights[0].setLinearAttenuation(1);
-	this.lights[0].setQuadraticAttenuation(0);
-	this.lights[0].enable();
+	this.lights[0].setSpecular(1, 1, 0, 1);
 
 	this.lights[1].setAmbient(0, 0, 0, 1);
 	this.lights[1].setDiffuse(1.0, 1.0, 1.0, 1.0);
-	this.lights[1].enable();
-	this.lights[1].setVisible(true);
 
 	this.lights[2].setAmbient(0, 0, 0, 1);
 	this.lights[2].setDiffuse(1.0, 1.0, 1.0, 1.0);
-	this.lights[2].setSpecular(1,1,1,1);
-	this.lights[2].setConstantAttenuation(0);
-	this.lights[2].setLinearAttenuation(1);
-	this.lights[2].setQuadraticAttenuation(0);
-	this.lights[2].enable();
+	this.lights[2].setSpecular(1.0, 1.0, 1.0, 1.0);
+	this.lights[2].setConstantAttenuation(0);	//kc
+	this.lights[2].setLinearAttenuation(1.0);	//kI
+	this.lights[2].setQuadraticAttenuation(0); //kq
 
 	this.lights[3].setAmbient(0, 0, 0, 1);
 	this.lights[3].setDiffuse(1.0, 1.0, 1.0, 1.0);
-	this.lights[3].setSpecular(1,1,1,1);
-	this.lights[3].setConstantAttenuation(0);
-	this.lights[3].setLinearAttenuation(1);
-	this.lights[3].setQuadraticAttenuation(0);
-	this.lights[3].enable();
-	
-	for (var i = 0; i < 4; i++)
+	this.lights[3].setSpecular(1, 1, 0, 1);
+	this.lights[3].setConstantAttenuation(0);	//kc
+	this.lights[3].setLinearAttenuation(0);	//kI
+	this.lights[3].setQuadraticAttenuation(0.2); //kq
+
+
+	for (var i = 0; i < 4; i++){
+		this.lights[i].enable();
 		this.lights[i].setVisible(true);
+	}
 
 };
 
 LightingScene.prototype.updateLights = function() {
+	
+	if(this.Luz1)
+		this.lights[0].enable();
+	else this.lights[0].disable();
+
+	if(this.Luz2)
+		this.lights[1].enable();
+	else this.lights[1].disable();
+
+	if(this.Luz3)
+		this.lights[2].enable();
+	else this.lights[2].disable();
+
+	if(this.Luz4)
+		this.lights[3].enable();
+	else this.lights[3].disable();
+
 	for (i = 0; i < this.lights.length; i++)
 		this.lights[i].update();
 }
@@ -318,12 +337,19 @@ LightingScene.prototype.display = function() {
 
 LightingScene.prototype.update = function(currTime){
 
-	this.clock.update(currTime);
+	if(this.clock.anim)
+		this.clock.update(currTime);
+	
 	this.paperPlane.update(currTime);
+
 	//this.drone.update(currTime);
 
 };
 
-LightingScene.prototype.doSomething = function (){
+LightingScene.prototype.Animacao_Relogio = function(){
+	this.clock.anim = !this.clock.anim;
+}
+
+LightingScene.prototype.doSomething = function(){
 	console.log("Doing something...");
 };
