@@ -23,22 +23,22 @@ function MyClock(scene, slices, stacks){
 	this.secondHand.setAngle(90);	//45s
 
 	this.clockAppearence = new CGFappearance(this.scene);
-	this.clockAppearence.loadTexture("/resources/images/clock.png");
+	this.clockAppearence.loadTexture("../resources/images/clock.png");
 	this.clockAppearence.setAmbient(0.24,0.24,0.24,1);
 	this.clockAppearence.setDiffuse(0.24,0.24,0.24,1);
-	this.clockAppearence.setSpecular(0.5,0.5,0.5,1);	
+	this.clockAppearence.setSpecular(0.5,0.5,0.5,1);
 	this.clockAppearence.setShininess(5);
 
 	this.handAppearence = new CGFappearance(this.scene);
 	this.handAppearence.setAmbient(0,0,0,0);
 	this.handAppearence.setDiffuse(0,0,0,0);
-	this.handAppearence.setSpecular(0,0,0,0);	
+	this.handAppearence.setSpecular(0,0,0,0);
 	this.handAppearence.setShininess(0);
 
 	this.materialMetal = new CGFappearance(this.scene);
 	this.materialMetal.setAmbient(0.24,0.24,0.24,1);
 	this.materialMetal.setDiffuse(0.24,0.24,0.24,1);
-	this.materialMetal.setSpecular(0.5,0.5,0.5,1);	
+	this.materialMetal.setSpecular(0.5,0.5,0.5,1);
 	this.materialMetal.setShininess(120);
 
 	this.anim =true;
@@ -48,7 +48,7 @@ MyClock.prototype = Object.create(CGFobject.prototype);
 MyClock.prototype.constructor = MyClock;
 
 MyClock.prototype.display = function(){
-	
+
 	var degToRad = Math.PI / 180;
 
 	this.scene.pushMatrix();
@@ -82,7 +82,7 @@ MyClock.prototype.display = function(){
 	this.handAppearence.apply();
 	this.secondHand.display();
 	this.scene.popMatrix();
-	
+
 };
 
 MyClock.prototype.update = function(currTime){

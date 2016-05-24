@@ -41,7 +41,7 @@ LightingScene.prototype.init = function(application) {
 	//this.lamp = new MyLamp(this, 25, 19);
 	this.clock = new MyClock(this, 12, 1);
 	this.paperPlane = new MyPaperPlane(this, 12, 8);
-	this.drone = new MyDrone(this);
+	this.drone = new MyDrone(this, 10,3.825,8, -180);
 
 
 	// Materials
@@ -56,69 +56,69 @@ LightingScene.prototype.init = function(application) {
 	this.materialB = new CGFappearance(this);
 	this.materialB.setAmbient(0.3,0.3,0.3,1);
 	this.materialB.setDiffuse(0.6,0.6,0.6,1);
-	this.materialB.setSpecular(0.8,0.8,0.8,1);	
+	this.materialB.setSpecular(0.8,0.8,0.8,1);
 	this.materialB.setShininess(120);
-	
+
 	this.materialFloor = new CGFappearance(this);
 	this.materialFloor.setAmbient(0.25,0.25,0.25,1);
 	this.materialFloor.setDiffuse(0.25,0.25,0.25,1);
-	this.materialFloor.setSpecular(0.25,0.25,0.25,1);	
+	this.materialFloor.setSpecular(0.25,0.25,0.25,1);
 	this.materialFloor.setShininess(120);
 
 	this.materialMetal = new CGFappearance(this);
 	this.materialMetal.setAmbient(0.24,0.24,0.24,1);
 	this.materialMetal.setDiffuse(0.24,0.24,0.24,1);
-	this.materialMetal.setSpecular(0.5,0.5,0.5,1);	
+	this.materialMetal.setSpecular(0.5,0.5,0.5,1);
 	this.materialMetal.setShininess(120);
 
 	this.materialWall = new CGFappearance(this);
 	this.materialWall.setAmbient(1,1,0.6,1);
 	this.materialWall.setDiffuse(1,1,0.6,1);
-	this.materialWall.setSpecular(1,1,0.6,1);	
+	this.materialWall.setSpecular(1,1,0.6,1);
 	this.materialWall.setShininess(120);
 
 	this.windowAppearance = new CGFappearance(this);
 	this.windowAppearance.setAmbient(1,1,0.6,1);
 	this.windowAppearance.setDiffuse(1,1,0.6,1);
-	this.windowAppearance.setSpecular(1,1,0.6,1);	
+	this.windowAppearance.setSpecular(1,1,0.6,1);
 	this.windowAppearance.setShininess(10);
-	this.windowAppearance.loadTexture("/resources/images/window.png");
+	this.windowAppearance.loadTexture("../resources/images/window.png");
 	this.windowAppearance.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
 
 	this.floorAppearance = new CGFappearance(this);
 	this.floorAppearance.setAmbient(0.25,0.25,0.25,1);
 	this.floorAppearance.setDiffuse(0.25,0.25,0.25,1);
-	this.floorAppearance.setSpecular(0.25,0.25,0.25,1);	
+	this.floorAppearance.setSpecular(0.25,0.25,0.25,1);
 	this.floorAppearance.setShininess(5);
-	this.floorAppearance.loadTexture("/resources/images/floor.png");
+	this.floorAppearance.loadTexture("../resources/images/floor.png");
 
 	this.slidesAppearance = new CGFappearance(this);
 	this.slidesAppearance.setAmbient(0.25,0.25,0.25,1);
 	this.slidesAppearance.setDiffuse(0.75,0.75,0.75,1);
-	this.slidesAppearance.setSpecular(0.25,0.25,0.25,1);	
+	this.slidesAppearance.setSpecular(0.25,0.25,0.25,1);
 	this.slidesAppearance.setShininess(5);
-	this.slidesAppearance.loadTexture("/resources/images/slides.png");
+	this.slidesAppearance.loadTexture("../resources/images/slides.png");
 
 	this.boardAppearance = new CGFappearance(this);
 	this.boardAppearance.setAmbient(0.25,0.25,0.25,1);
 	this.boardAppearance.setDiffuse(0.85,0.85,0.85,1);
-	this.boardAppearance.setSpecular(0.65,0.65,0.65,1);	
+	this.boardAppearance.setSpecular(0.65,0.65,0.65,1);
 	this.boardAppearance.setShininess(60);
-	this.boardAppearance.loadTexture("/resources/images/board.png");
+	this.boardAppearance.loadTexture("../resources/images/board.png");
 
 	this.stoneAppearance = new CGFappearance(this);
 	this.stoneAppearance.setAmbient(0.25,0.25,0.25,1);
 	this.stoneAppearance.setDiffuse(0.75,0.75,0.75,1);
-	this.stoneAppearance.setSpecular(0.25,0.25,0.25,1);	
+	this.stoneAppearance.setSpecular(0.25,0.25,0.25,1);
 	this.stoneAppearance.setShininess(5);
-	this.stoneAppearance.loadTexture("/resources/images/granite.png");
+	this.stoneAppearance.loadTexture("../resources/images/granite.png");
 
 	this.clockAppearance = new CGFappearance(this);
 	this.clockAppearance.setAmbient(0.5, 0.5, 0.5, 1);
 	this.clockAppearance.setDiffuse(0.1, 0.1, 0.1, 1);
 	this.clockAppearance.setSpecular(0.01, 0.01, 0.01, 1);
 	this.clockAppearance.setShininess(5);
-	this.clockAppearance.loadTexture("/resources/images/clock.png");
+	this.clockAppearance.loadTexture("../resources/images/clock.png");
 
 	this.setUpdatePeriod(10);
 
@@ -182,7 +182,7 @@ LightingScene.prototype.initLights = function() {
 };
 
 LightingScene.prototype.updateLights = function() {
-	
+
 	if(this.Luz1)
 		this.lights[0].enable();
 	else this.lights[0].disable();
@@ -273,7 +273,7 @@ LightingScene.prototype.display = function() {
 	this.pushMatrix();
 	this.translate(4, 4.5, 0.2);
 	this.scale(BOARD_WIDTH, BOARD_HEIGHT, 1);
-		
+
 	this.slidesAppearance.apply();
 	this.boardA.display();
 	this.popMatrix();
@@ -282,7 +282,7 @@ LightingScene.prototype.display = function() {
 	this.pushMatrix();
 	this.translate(10.5, 4.5, 0.2);
 	this.scale(BOARD_WIDTH, BOARD_HEIGHT, 1);
-		
+
 	this.boardAppearance.apply();
 	this.boardB.display();
 	this.popMatrix();
@@ -310,7 +310,7 @@ LightingScene.prototype.display = function() {
 	this.scale(0.5, 0.5, 0.15);
 	this.clock.display();
 	this.popMatrix();
-	
+
 	//Aviao
 	this.materialMetal.apply();
 	this.pushMatrix();
@@ -323,12 +323,8 @@ LightingScene.prototype.display = function() {
 	this.popMatrix();
 
 	//Drone
-	this.pushMatrix();
-	this.rotate(180 * degToRad, 0, 1, 0);
-	this.translate(this.drone.x, this.drone.y, this.drone.z);
-	this.rotate(this.drone.yRot, 0 , 1 ,0);
+
 	this.drone.display();
-	this.popMatrix();
 
 
 	// ---- END Primitive drawing section
@@ -339,8 +335,10 @@ LightingScene.prototype.update = function(currTime){
 
 	if(this.clock.anim)
 		this.clock.update(currTime);
-	
+
 	this.paperPlane.update(currTime);
+
+	this.drone.update(currTime);
 
 	//this.drone.update(currTime);
 

@@ -7,22 +7,22 @@ function MyTable(scene) {
 	CGFobject.call(this,scene);
 
 	this.tableAppearence = new CGFappearance(this.scene);
-	this.tableAppearence.loadTexture("/resources/images/table.png");
+	this.tableAppearence.loadTexture("../resources/images/table.png");
 	this.tableAppearence.setAmbient(0.4,0.2,0,1);
 	this.tableAppearence.setDiffuse(0.5,0.5,0,5);
-	this.tableAppearence.setSpecular(0.01,0.01,0.01,0.01);	
+	this.tableAppearence.setSpecular(0.01,0.01,0.01,0.01);
 	this.tableAppearence.setShininess(5);
 
     this.materialWood = new CGFappearance(this.scene);
 	this.materialWood.setAmbient(0.4,0.2,0,1);
 	this.materialWood.setDiffuse(0.4,0.2,0,1);
-	this.materialWood.setSpecular(0.01,0.01,0.01,0.01);	
+	this.materialWood.setSpecular(0.01,0.01,0.01,0.01);
 	this.materialWood.setShininess(5);
 
 	this.materialMetal = new CGFappearance(this.scene);
 	this.materialMetal.setAmbient(0.24,0.24,0.24,1);
 	this.materialMetal.setDiffuse(0.24,0.24,0.24,1);
-	this.materialMetal.setSpecular(0.5,0.5,0.5,1);	
+	this.materialMetal.setSpecular(0.5,0.5,0.5,1);
 	this.materialMetal.setShininess(120);
 
 	this.cube = new MyUnitCubeQuad(this.scene, 0, 1, 0, 1);
@@ -42,7 +42,7 @@ MyTable.prototype.display = function() {
     this.tableAppearence.apply();
 	this.cube.display();
 	this.scene.popMatrix();
-	
+
 	this.scene.pushMatrix();
 
 	//--------Pernas da mesa--------------

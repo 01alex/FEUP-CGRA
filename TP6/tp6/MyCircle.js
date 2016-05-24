@@ -2,45 +2,51 @@
  * MyCircle
  * @constructor
  */
-function MyCircle(scene, rad, slices) {
-    CGFobject.call(this, scene);
+function MyCircle(scene, slices) {
+   CGFobject.call(this, scene);
 
-    this.rad = rad || 1;
-    this.slices = slices || 8;
-
-    this.initBuffers();
+   this.slices= slices;
+   this.initBuffers();
 };
 
 MyCircle.prototype = Object.create(CGFobject.prototype);
 MyCircle.prototype.constructor = MyCircle;
 
 MyCircle.prototype.initBuffers = function() {
-    this.vertices = [];
-    this.indices = [];
-    this.normals = [];
-    this.texCoords = [];
+   /*
+    * TODO:
+    * Replace the following lines in order to build a prism with a **single mesh**.
+    *
+    * How can the vertices, indices and normals arrays be defined to
+    * build a prism with varying number of slices and stacks?
+    */
+   this.vertices = [];
+   this.indices = [];
+   this.normals = [];
+   this.texCoords = [];
 
-    const angle = (2 * Math.PI) / this.slices; /* 2*PI/nSlices */
+      var ang = 2 * Math.PI / this.slices;
+      var n=0;
+      var x;
+      var y;
 
-    for (i = 0; i < this.slices; i++) {
-        this.vertices.push(this.rad*Math.cos(i * angle), this.rad*Math.sin(i * angle), 0);
-        this.normals.push(0, 0, 1);
-        this.texCoords.push(0.5 + 0.5 * Math.cos(i * angle), 0.5 - 0.5 * Math.sin(i * angle));
-    }
+      for (var m = 0; m < this.slices; m++) {
+        x=Math.cos(ang * m);
+        y = Math.sin(ang * m);
+         this.vertices.push(x, y, n);
+         this.normals.push(x,y, 0);
+         this.texCoords.push(0.5-0.5*x, 0.5-0.5*y);
 
-    this.vertices.push(0, 0, 0); /* Center Vertice */
-    this.normals.push(0, 0, 1);
-    this.texCoords.push(0.5, 0.5);
+      }
 
-    for (i = 0, index = 0; i < this.slices; i++, index++) {
-        if (index == this.slices - 1) {
-            this.indices.push(index, 0, this.slices);
-            break;
-        } else this.indices.push(index, index + 1, this.slices);
-    }
+    this.vertices.push(0,0,0);//centro
+    this.normals.push(0,0,1);
 
-    this.primitiveType = this.scene.gl.TRIANGLES;
-    this.initGLBuffers();
+    var centro = this.vertices[length-1];
+
+   for(i=0; i < this.slices-1; i++)
+      this.indices.push(i+1, i, centro);
+
+   this.primitiveType = this.scene.gl.TRIANGLES;
+   this.initGLBuffers();
 };
-
-MyCircle.prototype.updateTex = function(S, T) { };

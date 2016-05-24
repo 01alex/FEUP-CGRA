@@ -1,115 +1,134 @@
-/**
- * MyDrone
- * @constructor
- */
- 
 var degToRad = Math.PI / 180.0;
 
-function MyDrone(scene) {
-	
-	CGFobject.call(this,scene);
+function MyDrone(scene, x, y, z, angle) {
 
-	this.yRot = 15 * degToRad;
-	this.x = -7.5 - Math.sin(this.yRot);
-	this.y = 0;
-	this.z = -8.5;
+  CGFobject.call(this,scene);
 
-	this.lastUpdate = -1;
+  this.shape = new MyDroneObject(scene);
 
-	this.initBuffers();
+  //Initial Positions and Angles
+  this.x = x;
+  this.y = y;
+  this.z = z;
+
+  this.defaultAngle = angle;  //initial angle - Initial Movement Angle
+  this.lastAngle = angle; //end movement Angle
+
+  //Lean And Movement
+
+  this.defaultAngleY = 0;
+  this.defaultLeanAngle = 25 * degToRad;
+  this.motion = 0;
+  this.lastMotion = 0;
+
+  //Elevation
+  this.elevation = 0;
+  this.totalElevation = 0;
+
+  this.rotation = 0;
+  this.lastRotation = 0;
+
+  //Velocity
+  this.moveVel = 10;
+  this.rotationVel = 200;
+  this.elevationVel = 2;
+
+  this.heliceFactor = 1;
+  this.heliceVeloL = 0.2;
+    this.heliceVeloN = 1;
+    this.heliceVeloR = 10;
+
+  this.lastTime = 0;
 };
+
 
 MyDrone.prototype = Object.create(CGFobject.prototype);
 MyDrone.prototype.constructor = MyDrone;
 
-MyDrone.prototype.initBuffers = function() {
-    
- 	this.vertices = [
- 		0.5, 0.3, 0,
- 		-0.5, 0.3, 0,
- 		0, 0.3, 2,
- 	];
-
- 	this.indices = [
- 		0, 1, 2,
- 	];
-
-	this.primitiveType = this.scene.gl.TRIANGLES;
- 	this.initGLBuffers();
-};
-
-/*MyDrone.prototype.display = function(){
-	this.scene.pushMatrix();
-	this.scene.rotate(180 * degToRad, 0, 1, 0);
-	this.scene.translate(-7.5 - Math.sin(15*degToRad), 0, -8.5);
-	this.scene.rotate(15 * degToRad, 0 , 1 ,0);
-	this.scene.popMatrix();
-};*/
-
-/*
-MyDrone.prototype.update = function(currTime){
-	if(this.lastUpdate == -1)
-		this.lastUpdate = currTime;
-
-	var diff = currTime - this.lastUpdate;
-
-
-	this.lastUpdate = currTime;
-};*/
-
-MyDrone.prototype.rotateLeft = function(speed){
-	this.yRot += speed * degToRad;
+MyDrone.prototype.movement = function(direction) {
+  this.motion = direction * this.moveVel;
 }
 
-MyDrone.prototype.rotateRight = function(speed){
-	this.yRot -= speed * degToRad;
+MyDrone.prototype.elevate = function(direction) {
+  this.elevation = direction * this.elevationVel;
 }
 
-MyDrone.prototype.moveForward = function(speed){
-	this.x += Math.sin(this.yRot) * (speed / 15);
-	this.z += Math.cos(this.yRot) * (speed / 15);
-
-	if(this.x >= 0)
-		this.x = 0;
-	
-	if(this.z >= 0)
-		this.z = 0;
-
-	if(this.x <= -15)
-		this.x = -15;
-
-	if(this.z <= -15)
-		this.z = -15;
+MyDrone.prototype.rotate = function(angle){
+  this.rotation = angle * this.rotationVel;
 }
 
-MyDrone.prototype.moveBack = function(speed){
-	this.x -= Math.sin(this.yRot) * (speed / 15);
-	this.z -= Math.cos(this.yRot) * (speed / 15);
 
-	if(this.x >= 0)
-		this.x = 0;
-	
-	if(this.z >= 0)
-		this.z = 0;
+MyDrone.prototype.update = function(currTime) {
+  this.shape.update(currTime);
 
-	if(this.x <= -15)
-		this.x = -15;
+  if(this.lastTime === 0) {
+    this.lastTime = currTime;
+    return;
+  }
 
-	if(this.z <= -15)
-		this.z = -15;
+  var deltaTime = (currTime - this.lastTime) / 1000;
+
+  if(this.motion > 0){
+      this.shape.rightDroneArm.setVel1( this.heliceVeloL * this.heliceFactor);
+      this.shape.rightDroneArm.setVel2( this.heliceVeloR * this.heliceFactor);
+   }else if( this.motion < 0){
+      this.shape.rightDroneArm.setVel1( this.heliceVeloR * this.heliceFactor);
+      this.shape.rightDroneArm.setVel2( this.heliceVeloL * this.heliceFactor); 
+   }else{
+     this.shape.rightDroneArm.setVel1( this.heliceVeloN  * this.heliceFactor);
+      this.shape.rightDroneArm.setVel2( this.heliceVeloN * this.heliceFactor);
+   }
+
+   if(this.rotation > 0){
+      this.shape.leftDroneArm.setVel1( this.heliceVeloR * this.heliceFactor);
+      this.shape.leftDroneArm.setVel2( this.heliceVeloR * this.heliceFactor);
+      this.shape.rightDroneArm.setVel1( this.heliceVeloL * this.heliceFactor);
+      this.shape.rightDroneArm.setVel2( this.heliceVeloL * this.heliceFactor);
+   }else if( this.rotation < 0){
+      this.shape.leftDroneArm.setVel1( this.heliceVeloL * this.heliceFactor);
+      this.shape.leftDroneArm.setVel2( this.heliceVeloL * this.heliceFactor);
+      this.shape.rightDroneArm.setVel1( this.heliceVeloR * this.heliceFactor);
+      this.shape.rightDroneArm.setVel2( this.heliceVeloR * this.heliceFactor);
+   }else{
+     this.shape.leftDroneArm.setVel1( this.heliceVeloN * this.heliceFactor);
+     this.shape.leftDroneArm.setVel2( this.heliceVeloN * this.heliceFactor);
+   }
+
+  this.lastAngle += (this.defaultAngle - this.lastAngle) * deltaTime;
+  this.lastMotion += (this.motion - this.lastMotion) * deltaTime;
+  this.lastRotation += (this.rotation - this.lastRotation) * deltaTime;
+  this.totalElevation += (this.elevation - this.totalElevation) * deltaTime;
+
+  //Position
+
+  var tempX = Math.cos(-(this.defaultAngle - 90) * degToRad);
+  var tempZ = Math.sin(-(this.defaultAngle-90) * degToRad);
+
+  this.x += tempX * this.lastMotion * deltaTime;
+  this.y += this.totalElevation * deltaTime;
+  this.z += tempZ * this.lastMotion * deltaTime;
+
+  //Rotation
+
+  this.defaultAngle += this.lastRotation * deltaTime;
+  this.defaultAngleY = this.defaultLeanAngle * (this.lastMotion / this.moveVel);
+
+  this.lastTime = currTime;
+
 }
 
-MyDrone.prototype.moveUp = function(speed){
-	this.y += (speed / 15);
 
-	if(this.y >= 7.8)		//7.5 de altura da cena + 0.3 de altura por defeito do drone
-		this.y = 7.8;
+MyDrone.prototype.display = function(){
+
+  this.scene.pushMatrix();
+
+  this.scene.pushMatrix();
+  this.scene.translate(this.x,this.y,this.z);
+  this.scene.rotate(this.defaultAngle*degToRad, 0,1,0);
+  this.scene.rotate(this.defaultAngleY, 1,0,0);
+  this.shape.display();
+  this.scene.popMatrix();
+
+  this.scene.popMatrix();
+
 }
-
-MyDrone.prototype.moveDown = function(speed){
-	this.y -= (speed / 15);
-
-	if(this.y <= 0)
-		this.y = 0;
-}
-

@@ -4,9 +4,13 @@
  */
  function MyLamp(scene, slices, stacks) {
  	CGFobject.call(this,scene);
-	
-	this.slices=slices;
-	this.stacks=stacks;
+
+	this.slices = slices;
+	this.stacks = stacks;
+	var angulo = 360 / this.slices;
+	this.aRad = (angulo * Math.PI) / 180;
+	angulo = 90 / this.stacks;
+	this.aRadS = (angulo * Math.PI) / 180;
 
  	this.initBuffers();
  };
@@ -15,47 +19,96 @@
  MyLamp.prototype.constructor = MyLamp;
 
  MyLamp.prototype.initBuffers = function() {
-	
+
+
  	this.vertices = [];
  	this.indices = [];
-	this.normals = [];
+ 	this.normals = [];
+ 	this.texCoords = [];
 
-	var stack = 1/this.stacks;
-	//---------------stacks------------------
-	for (var q = 0; q <= 1;) {
-		//---------------slices------------------
-		for (var i = 0; i < this.slices; i++) {
-			this.vertices.push(Math.sqrt(1-(q*q))*Math.cos(i*(2*Math.PI)/this.slices));
-			this.vertices.push(Math.sqrt(1-(q*q))*Math.sin(i*(2*Math.PI)/this.slices));
-			this.vertices.push(q);
+	//Angulo entre o plano xOy e z;
+	var fi = this.aRadS;
+	//Angulo entre x e y;
+	var teta;
 
-			this.normals.push(Math.sqrt(1-(q*q))*Math.cos(i*(2*Math.PI)/this.slices));
-			this.normals.push(Math.sqrt(1-(q*q))*Math.sin(i*(2*Math.PI)/this.slices));
-			this.normals.push(q);
+	var triN = 0;
+
+	for(var j = 0; j < this.slices; j++){
+		teta = j * this.aRad;
+		for(var i = 0; i < this.stacks; i++){
+			var x,y,z;
+			if(i == 0){
+				z = Math.sin(i*fi) * Math.cos(teta);
+				x = Math.sin(i*fi) * Math.sin(teta);
+				y = Math.cos(i*fi);
+				//adicionar vertices
+				this.vertices.push(x,y,z);
+				this.texCoords.push( (x+1) / 2.0, ((z*-1)+1)/2.0);
+				this.normals.push(x,y,z);
+
+				z = Math.sin(i*fi+this.aRadS) * Math.cos(teta);
+				x = Math.sin(i*fi+this.aRadS) * Math.sin(teta);
+				y = Math.cos(i*fi+this.aRadS);
+				this.vertices.push(x,y,z);
+        		this.texCoords.push( (x+1) / 2.0, ((z*-1)+1)/2.0);
+				this.normals.push(x,y,z);
+
+				z = Math.sin(i*fi+this.aRadS) * Math.cos(teta+this.aRad);
+				x = Math.sin(i*fi+this.aRadS) * Math.sin(teta+this.aRad);
+				y = Math.cos(i*fi+this.aRadS);
+				this.vertices.push(x,y,z);
+				this.texCoords.push( (x+1) / 2.0, ((z*-1)+1)/2.0);
+				this.normals.push(x,y,z);
+
+				this.indices.push(triN);
+				this.indices.push(triN + 1);
+				this.indices.push(triN + 2);
+				triN+=3;
+
+				continue;
+			}
+
+			z = Math.sin(i*fi) * Math.cos(teta);
+			x = Math.sin(i*fi) * Math.sin(teta);
+			y = Math.cos(i*fi);
+			this.vertices.push(x,y,z);
+			this.texCoords.push( (x+1) / 2.0, ((z*-1)+1)/2.0);
+			this.normals.push(x,y,z);
+
+			z = Math.sin(i*fi+this.aRadS) * Math.cos(teta);
+			x = Math.sin(i*fi+this.aRadS) * Math.sin(teta);
+			y = Math.cos(i*fi+this.aRadS);
+			this.vertices.push(x,y,z);
+			this.texCoords.push( (x+1) / 2.0, ((z*-1)+1)/2.0);
+			this.normals.push(x,y,z);
+
+			z = Math.sin(i*fi) * Math.cos(teta+this.aRad);
+			x = Math.sin(i*fi) * Math.sin(teta+this.aRad);
+			y = Math.cos(i*fi);
+			this.vertices.push(x,y,z);
+			this.texCoords.push( (x+1) / 2.0, ((z*-1)+1)/2.0);
+			this.normals.push(x,y,z);
+
+			z = Math.sin(i*fi + this.aRadS) * Math.cos(teta+this.aRad);
+			x = Math.sin(i*fi + this.aRadS) * Math.sin(teta+this.aRad);
+			y = Math.cos(i*fi + this.aRadS);
+			this.vertices.push(x,y,z);
+			this.texCoords.push( (x+1) / 2.0, ((z*-1)+1)/2.0);
+			this.normals.push(x,y,z);
+
+
+			this.indices.push(triN);
+			this.indices.push(triN + 1);
+			this.indices.push(triN + 2);
+
+			this.indices.push(triN + 1);
+			this.indices.push(triN + 3);
+			this.indices.push(triN + 2);
+			triN+=4;
+
 		}
-
-		q = q + stack;
 	}
 
-	for (var q = 0; q < this.stacks; q++) {
-		//---------------slices------------------
-		for (var i = 0; i < this.slices; i++) {
-
-			this.indices.push(this.slices*q+i);
-			this.indices.push(this.slices*q+i+1);
-			this.indices.push(this.slices*(q+1)+i);
-			if (i != (this.slices - 1)) {
-				this.indices.push(this.slices*(q+1)+i+1);
-				this.indices.push(this.slices*(q+1)+i);
-				this.indices.push(this.slices*q+i+1);
-				}
-			else {
-				this.indices.push(this.slices*q);
-				this.indices.push(this.slices*q+i+1)
-				this.indices.push(this.slices*q+i);
-				}
-		}
-	}
 
  	this.primitiveType = this.scene.gl.TRIANGLES;
  	this.initGLBuffers();
