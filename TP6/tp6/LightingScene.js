@@ -32,20 +32,27 @@ LightingScene.prototype.init = function(application) {
 	// Scene elements
 	this.table = new MyTable(this);
 	this.wall = new Plane(this);
-	this.leftWall = new MyQuad(this, -0.6, 1.55, -0.6, 1.55);
+	this.leftWall = new MyQuad(this, -1, 2, -0.5, 1.5);
 	this.floor = new MyQuad(this, 0, 10, 0, 12);
 	this.boardA = new Plane(this,-0.17, 1.3, 0.1, 0.8, BOARD_A_DIVISIONS);
 	this.boardB = new Plane(this,0, 1, 0, 1, BOARD_B_DIVISIONS);
 	this.prism = new MyPrism(this, 8, 20);
-	this.cylinder = new MyCylinder(this, 8, 20);
+	this.cylinder = new MyCylinder(this,8,20, 2, 5);
+//	this.cylinder = new MyClosedCylinder(this, 8, 20, 2, 5);
+
 	//this.lamp = new MyLamp(this, 25, 19);
 	this.clock = new MyClock(this, 12, 1);
 	this.paperPlane = new MyPaperPlane(this, 12, 8);
 	this.drone = new MyDrone(this, 10,3.825,8, -180);
+	//this.drone = new MyDrone(this, 10,10,10, -180);
+
+	this.droneAppearanceList = ['Drone1', 'Drone2', 'Drone3'];
+	this.currDroneAppearance = 0;
 
 
 	// Materials
 	this.materialDefault = new CGFappearance(this);
+
 
 	this.materialA = new CGFappearance(this);
 	this.materialA.setAmbient(0.3,0.3,0.3,1);
@@ -77,6 +84,8 @@ LightingScene.prototype.init = function(application) {
 	this.materialWall.setSpecular(1,1,0.6,1);
 	this.materialWall.setShininess(120);
 
+	this.enableTextures(true);
+
 	this.windowAppearance = new CGFappearance(this);
 	this.windowAppearance.setAmbient(1,1,0.6,1);
 	this.windowAppearance.setDiffuse(1,1,0.6,1);
@@ -107,10 +116,9 @@ LightingScene.prototype.init = function(application) {
 	this.boardAppearance.loadTexture("../resources/images/board.png");
 
 	this.stoneAppearance = new CGFappearance(this);
-	this.stoneAppearance.setAmbient(0.25,0.25,0.25,1);
-	this.stoneAppearance.setDiffuse(0.75,0.75,0.75,1);
-	this.stoneAppearance.setSpecular(0.25,0.25,0.25,1);
-	this.stoneAppearance.setShininess(5);
+	this.stoneAppearance.setDiffuse(0.2,0.2,0.2,1);
+	this.stoneAppearance.setSpecular(0.5,0.5,0.5,1);
+	this.stoneAppearance.setShininess(60);
 	this.stoneAppearance.loadTexture("../resources/images/granite.png");
 
 	this.clockAppearance = new CGFappearance(this);
@@ -136,7 +144,7 @@ LightingScene.prototype.initCameras = function() {
 
 LightingScene.prototype.initLights = function() {
 
-	this.setGlobalAmbientLight(0.4,0.4,0.4,0.4);
+	this.setGlobalAmbientLight(0.0,0.0,0.0,1.0);
 
 	// Positions for four lights
 	this.lights[0].setPosition(4, 6, 1, 1);
@@ -148,33 +156,50 @@ LightingScene.prototype.initLights = function() {
 	this.lights[2].setPosition(10.5, 6, 12, 1);
 	this.Luz3 = true;
 
-	this.lights[3].setPosition(4, 6, 12, 1);
+	this.lights[3].setPosition(4, 6, 5, 1);
 	this.Luz4 = true;
+
+	this.lights[4].setPosition(-0.1, 4, 7.5, 1);
+	this.Luz5 = true;
 
 
 	this.lights[0].setAmbient(0, 0, 0, 1);
 	this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
-	this.lights[0].setSpecular(1, 1, 0, 1);
+	this.lights[0].setSpecular(1.0,1.0,0,1.0);
+	this.lights[0].enable();
 
 	this.lights[1].setAmbient(0, 0, 0, 1);
 	this.lights[1].setDiffuse(1.0, 1.0, 1.0, 1.0);
+	this.lights[1].enable();
 
 	this.lights[2].setAmbient(0, 0, 0, 1);
 	this.lights[2].setDiffuse(1.0, 1.0, 1.0, 1.0);
-	this.lights[2].setSpecular(1.0, 1.0, 1.0, 1.0);
-	this.lights[2].setConstantAttenuation(0);	//kc
-	this.lights[2].setLinearAttenuation(1.0);	//kI
-	this.lights[2].setQuadraticAttenuation(0); //kq
+	this.lights[2].setConstantAttenuation(0);
+	this.lights[2].setLinearAttenuation(1);
+	this.lights[2].setQuadraticAttenuation(0);
+	this.lights[2].enable();
 
 	this.lights[3].setAmbient(0, 0, 0, 1);
 	this.lights[3].setDiffuse(1.0, 1.0, 1.0, 1.0);
-	this.lights[3].setSpecular(1, 1, 0, 1);
-	this.lights[3].setConstantAttenuation(0);	//kc
-	this.lights[3].setLinearAttenuation(0);	//kI
-	this.lights[3].setQuadraticAttenuation(0.2); //kq
+	this.lights[3].setSpecular(1.0,1.0,0,1.0);
+	this.lights[3].setConstantAttenuation(0);
+	this.lights[3].setLinearAttenuation(0);
+	this.lights[3].setQuadraticAttenuation(1);
+	this.lights[3].enable();
+
+	this.lights[4].setAmbient(0, 0, 0, 1);
+	this.lights[4].setDiffuse(1.0, 1.0, 1.0, 1.0);
+	this.lights[4].setSpecular(1.0,1.0,0,1.0);
+	this.lights[4].setConstantAttenuation(1);
+	this.lights[4].setLinearAttenuation(0);
+	this.lights[4].setQuadraticAttenuation(0);
+	this.lights[4].enable();
 
 
-	for (var i = 0; i < 4; i++){
+
+
+
+	for (var i = 0; i < 5; i++){
 		this.lights[i].enable();
 		this.lights[i].setVisible(true);
 	}
@@ -198,6 +223,10 @@ LightingScene.prototype.updateLights = function() {
 	if(this.Luz4)
 		this.lights[3].enable();
 	else this.lights[3].disable();
+
+	if(this.Luz5)
+		this.lights[4].enable();
+	else this.lights[4].disable();
 
 	for (i = 0; i < this.lights.length; i++)
 		this.lights[i].update();
@@ -289,19 +318,18 @@ LightingScene.prototype.display = function() {
 
 	//Colunas
 	this.pushMatrix();
-	this.stoneAppearance.apply();
-	this.rotate(-90 * degToRad, 1, 0, 0);
-	this.scale(0.7, 0.7, 0.4);
-	this.translate(2, -20, 0);
-	this.cylinder.display();
-	this.popMatrix();
+		this.translate(1,0,1);
+		this.rotate(-(Math.PI/2.0),1,0,0);
+		this.stoneAppearance.apply();
+		this.scale(1,1,8);
 
-	this.pushMatrix();
-	this.stoneAppearance.apply();
-	this.rotate(-90 * degToRad, 1, 0, 0);
-	this.scale(0.7, 0.7, 0.4);
-	this.translate(20, -20, 0);
-	this.cylinder.display();
+		this.cylinder.display();
+
+		this.translate(0,-13,0);
+		this.cylinder.display();
+
+		this.translate(13,0,0);
+		this.cylinder.display();
 	this.popMatrix();
 
 	//Relogio
@@ -323,7 +351,7 @@ LightingScene.prototype.display = function() {
 	this.popMatrix();
 
 	//Drone
-
+//	this.droneAppearance.apply();
 	this.drone.display();
 
 
@@ -338,9 +366,31 @@ LightingScene.prototype.update = function(currTime){
 
 	this.paperPlane.update(currTime);
 
-	this.drone.update(currTime);
 
-	//this.drone.update(currTime);
+
+	if (this.currDroneAppearance == 'Drone1')
+	{
+		this.drone.ApIndex = 0;
+	//	this.robot.wheel.ApIndex = 0;
+		//this.robot.leftArm.ApIndex = 0;
+	//	this.robot.rightArm.ApIndex = 0;
+	}
+	if (this.currDroneAppearance == 'Drone2')
+	{
+		this.drone.ApIndex = 1;
+	//	this.robot.wheel.ApIndex = 1;
+	//	this.robot.leftArm.ApIndex = 1;
+	//	this.robot.rightArm.ApIndex = 1;
+	}
+	if (this.currDroneAppearance == 'Drone3')
+	{
+		this.drone.ApIndex = 2;
+	//	this.robot.wheel.ApIndex = 2;
+	//	this.robot.leftArm.ApIndex = 2;
+	//	this.robot.rightArm.ApIndex = 2;
+	}
+
+	this.drone.update(currTime);
 
 };
 
