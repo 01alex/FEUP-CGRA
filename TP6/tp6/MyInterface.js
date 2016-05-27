@@ -50,6 +50,7 @@ MyInterface.prototype.init = function(application) {
 	Luzes.add(this.scene, 'Luz2');
 	Luzes.add(this.scene, 'Luz3');
 	Luzes.add(this.scene, 'Luz4');
+	Luzes.add(this.scene, 'Luz5');
 
 	// add a slider
 	// must be a numeric variable of the scene, initialized in scene.init e.g.
@@ -57,6 +58,8 @@ MyInterface.prototype.init = function(application) {
 	// min and max values can be specified as parameters
 
 	this.gui.add(this.scene, 'speed', -5, 5);
+
+	this.gui.add(this.scene, 'currDroneAppearance', this.scene.droneAppearanceList);
 
 //  this.gui.add(this.scene, 'Drone Texture choice');
 
