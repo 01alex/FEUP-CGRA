@@ -1,52 +1,47 @@
-/**
- * MyCircle
- * @constructor
- */
 function MyCircle(scene, slices) {
-   CGFobject.call(this, scene);
+ 	CGFobject.call(this,scene);
 
-   this.slices= slices;
-   this.initBuffers();
-};
+	this.slices = slices;
+	var angle = 360 / this.slices;
+	this.aRad = (angle * Math.PI) / 180;
+ 	this.initBuffers();
+ };
 
-MyCircle.prototype = Object.create(CGFobject.prototype);
-MyCircle.prototype.constructor = MyCircle;
+ MyCircle.prototype = Object.create(CGFobject.prototype);
+ MyCircle.prototype.constructor = MyCircle;
 
-MyCircle.prototype.initBuffers = function() {
-   /*
-    * TODO:
-    * Replace the following lines in order to build a prism with a **single mesh**.
-    *
-    * How can the vertices, indices and normals arrays be defined to
-    * build a prism with varying number of slices and stacks?
-    */
-   this.vertices = [];
-   this.indices = [];
-   this.normals = [];
-   this.texCoords = [];
+ MyCircle.prototype.initBuffers = function() {
 
-      var ang = 2 * Math.PI / this.slices;
-      var n=0;
-      var x;
-      var y;
+ 	this.vertices = [];
+ 	this.indices = [];
+ 	this.normals = [];
+ 	this.texCoords = [];
 
-      for (var m = 0; m < this.slices; m++) {
-        x=Math.cos(ang * m);
-        y = Math.sin(ang * m);
-         this.vertices.push(x, y, n);
-         this.normals.push(x,y, 0);
-         this.texCoords.push(0.5-0.5*x, 0.5-0.5*y);
+  var verts = 0;
+  var ang = 0;
+  var indiceTemp = 0;
 
-      }
+  for(var i = 0 ; i < this.slices; i++){
 
-    this.vertices.push(0,0,0);//centro
+    var x = Math.cos(ang);
+    var y = Math.sin(ang);
+
+    this.vertices.push(x,y,1);
     this.normals.push(0,0,1);
 
-    var centro = this.vertices[length-1];
+    if(i < this.slices - 2 )
+        this.indices.push(indiceTemp, indiceTemp + i + 1, indiceTemp + i + 2);
 
-   for(i=0; i < this.slices-1; i++)
-      this.indices.push(i+1, i, centro);
+    var s = (x+1) /2.0;
 
-   this.primitiveType = this.scene.gl.TRIANGLES;
-   this.initGLBuffers();
-};
+    var v = ((y*-1)+1) /2.0;
+
+    this.texCoords.push( s, v);
+
+    ang += this.aRad;
+}
+
+
+this.primitiveType = this.scene.gl.TRIANGLES;
+this.initGLBuffers();
+ };

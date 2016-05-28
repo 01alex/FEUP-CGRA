@@ -58,6 +58,7 @@ MyInterface.prototype.init = function(application) {
 	// min and max values can be specified as parameters
 
 	this.gui.add(this.scene, 'speed', -5, 5);
+	this.gui.add(this.scene, 'Helix_Rot_Factor', 0.1, 2);
 
 	this.gui.add(this.scene, 'currDroneAppearance', this.scene.droneAppearanceList);
 
@@ -84,82 +85,70 @@ MyInterface.prototype.init = function(application) {
  		case (65):	// only works for capital 'A', as it is
  			this.scene.drone.rotate(1);
  			break;
- 		case (68):	// only works for capital 'D', as it is
- 			this.scene.drone.rotate(-1);
- 			break;
- 		case (87):	// only works for capital 'W', as it is
- 			this.scene.drone.move(1);
- 			break;
- 		case (83):	// only works for capital 'S', as it is
- 			this.scene.drone.move(-1);
- 			break;
- 		case (73):	// only works for capital 'I', as it is
- 			this.scene.drone.elevate(1);
- 			break;
- 		case (74):	// only works for capital 'J', as it is
- 			this.scene.drone.elevate(-1);
- 			break;
-
  	};
  	*/
-
  };
 
  MyInterface.prototype.processKeyDown = function(event){
+ 	
  	CGFinterface.prototype.processKeyDown.call(this,event);
 
- 		switch (event.keyCode)
- 	{
- 		case (65):	// only works for capital 'A', as it is
- 			this.scene.drone.rotate(1);
- 			break;
- 		case (68):	// only works for capital 'D', as it is
- 			this.scene.drone.rotate(-1);
- 			break;
- 		case (87):	// only works for capital 'W', as it is
- 			this.scene.drone.movement(1);
- 			break;
- 		case (83):	// only works for capital 'S', as it is
- 			this.scene.drone.movement(-1);
- 			break;
- 		case (73):	// only works for capital 'I', as it is
- 			this.scene.drone.elevate(1);
- 			break;
- 		case (74):	// only works for capital 'J', as it is
- 			this.scene.drone.elevate(-1);
- 			break;
- 		case (80):
- 			this.scene.drone.moveHook(-1);
- 			break;
- 		case (76):
- 			this.scene.drone.moveHook(1);
- 			break;
+ 	var key = event.which || event.keyCode;
+ 	
+ 	switch (key){
 
+ 		case (65):	// only works for capital 'A', as it is
+ 		this.scene.drone.rotate(1);
+ 		break;
+ 		case (68):	// only works for capital 'D', as it is
+ 		this.scene.drone.rotate(-1);
+ 		break;
+ 		case (87):	// only works for capital 'W', as it is
+ 		this.scene.drone.movement(1);
+ 		break;
+ 		case (83):	// only works for capital 'S', as it is
+ 		this.scene.drone.movement(-1);
+ 		break;
+ 		case (73):	// only works for capital 'I', as it is
+ 		this.scene.drone.elevate(1);
+ 		break;
+ 		case (74):	// only works for capital 'J', as it is
+ 		this.scene.drone.elevate(-1);
+ 		break;
+ 		case (80):
+ 		this.scene.drone.moveHook(-1);
+ 		break;
+ 		case (76):
+ 		this.scene.drone.moveHook(1);
+ 		break;
 
  	};
  };
 
  MyInterface.prototype.processKeyUp = function(event){
+	
 	CGFinterface.prototype.processKeyUp.call(this,event);
-		switch (event.keyCode)
-	{
+
+	var key = event.which || event.keyCode;
+
+	switch (key){
 		case (65):	// only works for capital 'A', as it is
 		case (68):	// only works for capital 'D', as it is
-			this.scene.drone.rotate(0);
-			break;
+		this.scene.drone.rotate(0);
+		break;
 		case (87):	// only works for capital 'W', as it is
 		case (83):	// only works for capital 'S', as it is
-			this.scene.drone.movement(0);
-			break;
+		this.scene.drone.movement(0);
+		break;
 		case (73):	// only works for capital 'I', as it is
 		case (74):	// only works for capital 'J', as it is
-			this.scene.drone.elevate(0);
-			break;
+		this.scene.drone.elevate(0);
+		break;
 		case (108):
 		case (76):
 		case (80):
 		case (112):
-	//		this.scene.drone.moveHook(0);
-			break;
-	};
+					//		this.scene.drone.moveHook(0);
+	break;
+};
 };

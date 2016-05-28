@@ -4,42 +4,26 @@ function MyClock(scene, slices, stacks){
 	this.lastUpdate = -1;
 
 	this.cylinder = new MyCylinder(this.scene, slices, stacks);
-	this.cylinder.initBuffers();
 
-	this.face = new MyCircle(this.scene, 1, 12);
-	this.face.initBuffers();
+
+	this.face = new MyCircle(this.scene, 12);
+
 
 	this.hourHand = new MyClockHand(this.scene, 0.5, 0);		//yy
-	this.hourHand.initBuffers();
+
 
 	this.minuteHand = new MyClockHand(this.scene, 0.7, 0);		//yy
-	this.minuteHand.initBuffers();
+
 
 	this.secondHand = new MyClockHand(this.scene, 0.9, 0);		//yy
-	this.secondHand.initBuffers();
+
 
 	this.hourHand.setAngle(270);	//3h
 	this.minuteHand.setAngle(180);	//30m
 	this.secondHand.setAngle(90);	//45s
 
-	this.clockAppearence = new CGFappearance(this.scene);
-	this.clockAppearence.loadTexture("../resources/images/clock.png");
-	this.clockAppearence.setAmbient(0.24,0.24,0.24,1);
-	this.clockAppearence.setDiffuse(0.24,0.24,0.24,1);
-	this.clockAppearence.setSpecular(0.5,0.5,0.5,1);
-	this.clockAppearence.setShininess(5);
+	this.initBuffers();
 
-	this.handAppearence = new CGFappearance(this.scene);
-	this.handAppearence.setAmbient(0,0,0,0);
-	this.handAppearence.setDiffuse(0,0,0,0);
-	this.handAppearence.setSpecular(0,0,0,0);
-	this.handAppearence.setShininess(0);
-
-	this.materialMetal = new CGFappearance(this.scene);
-	this.materialMetal.setAmbient(0.24,0.24,0.24,1);
-	this.materialMetal.setDiffuse(0.24,0.24,0.24,1);
-	this.materialMetal.setSpecular(0.5,0.5,0.5,1);
-	this.materialMetal.setShininess(120);
 
 	this.anim =true;
 };
@@ -52,34 +36,34 @@ MyClock.prototype.display = function(){
 	var degToRad = Math.PI / 180;
 
 	this.scene.pushMatrix();
-	this.clockAppearence.apply();
-	this.scene.translate(0, 0, 1);
+	this.scene.clockAppearance.apply();
+	this.scene.translate(0, 0, 0);
 	this.face.display();
 	this.scene.popMatrix();
 
 	this.scene.pushMatrix();
-	this.materialMetal.apply();
+	this.scene.materialMetal.apply();
 	this.cylinder.display();
 	this.scene.popMatrix();
 
 	this.scene.pushMatrix();
 	this.scene.translate(0,0,1.01);
 	this.scene.rotate(this.hourHand.angle * degToRad, 0, 0, 1);
-	this.handAppearence.apply();
+	this.scene.handAppearance.apply();
 	this.hourHand.display();
 	this.scene.popMatrix();
 
 	this.scene.pushMatrix();
 	this.scene.translate(0,0,1.01);
 	this.scene.rotate(this.minuteHand.angle * degToRad, 0, 0, 1);
-	this.handAppearence.apply();
+	this.scene.handAppearance.apply();
 	this.minuteHand.display();
 	this.scene.popMatrix();
 
 	this.scene.pushMatrix();
 	this.scene.translate(0,0,1.01);
 	this.scene.rotate(this.secondHand.angle * degToRad, 0, 0, 1);
-	this.handAppearence.apply();
+	this.scene.handAppearance.apply();
 	this.secondHand.display();
 	this.scene.popMatrix();
 

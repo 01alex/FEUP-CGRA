@@ -119,20 +119,24 @@ LightingScene.prototype.init = function(application) {
 	this.stoneAppearance.setDiffuse(0.2,0.2,0.2,1);
 	this.stoneAppearance.setSpecular(0.5,0.5,0.5,1);
 	this.stoneAppearance.setShininess(60);
-	this.stoneAppearance.loadTexture("../resources/images/granite.png");
+	this.stoneAppearance.loadTexture("../resources/images/pillar.png");
 
 	this.clockAppearance = new CGFappearance(this);
-	this.clockAppearance.setAmbient(0.5, 0.5, 0.5, 1);
-	this.clockAppearance.setDiffuse(0.1, 0.1, 0.1, 1);
-	this.clockAppearance.setSpecular(0.01, 0.01, 0.01, 1);
-	this.clockAppearance.setShininess(5);
+	this.clockAppearance.setDiffuse(0.5,0.5,0.5,1.0);
+	this.clockAppearance.setSpecular(0,0,0,1);
+	this.clockAppearance.setShininess(60);
 	this.clockAppearance.loadTexture("../resources/images/clock.png");
+
+	this.handAppearance = new CGFappearance(this);
+	this.handAppearance.setDiffuse(0.05,0.05,0.05,1);
+	this.handAppearance.setShininess(120);
 
 	this.setUpdatePeriod(10);
 
 	//this.option1 = true;
 	//this.option2 = false;
 	this.speed = 3;
+	this.Helix_Rot_Factor = 1;
 
 };
 

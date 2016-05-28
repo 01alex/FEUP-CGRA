@@ -73,9 +73,9 @@ function MyDrone(scene, x, y, z, angle) {
   this.bodyAppearanceList.push(this.bodyAppearance2);
 
   this.bodyAppearance3 = new CGFappearance(this.scene);
-  this.bodyAppearance3.setDiffuse(0.5,0.5,0.5,1.0);
-  this.bodyAppearance3.setSpecular(0.8,0.8,0.8,1);
-  this.bodyAppearance3.setShininess(200);
+  this.bodyAppearance3.setDiffuse(0.9,0.9,0.9,1.0);
+  this.bodyAppearance3.setSpecular(0.9,0.9,0.9,1);
+  this.bodyAppearance3.setShininess(10);
   this.bodyAppearance3.loadTexture("../resources/images/drone1.png");
 
   this.bodyAppearanceList.push(this.bodyAppearance3);
@@ -136,6 +136,8 @@ MyDrone.prototype.update = function(currTime) {
   this.rightDroneArm.update(currTime);
   this.leftDroneArm.update(currTime);
 
+  this.heliceFactor = this.scene.Helix_Rot_Factor;
+
   var deltaTime = (currTime - this.lastTime) / 1000;
 
   if(this.motion > 0){
@@ -181,21 +183,21 @@ MyDrone.prototype.update = function(currTime) {
 
 
 
-  this.x += tempX * this.lastMotion * deltaTime;
+  this.x += tempX * this.lastMotion * deltaTime * this.scene.speed;
   if(this.x < 2)
   this.x = 2;
   if(this.x > 30)
   this.x = 30;
 
 //  console.log(this.x);
-  this.y += this.totalElevation * deltaTime;
+  this.y += this.totalElevation * deltaTime * this.scene.speed;
 
   if(this.y < 0.1)
   this.y = 0.1;
   if(this.y > 15)
   this.y = 15;
 
-  this.z += tempZ * this.lastMotion * deltaTime;
+  this.z += tempZ * this.lastMotion * deltaTime * this.scene.speed;
   if(this.z < 2)
   this.z = 2;
   if(this.z > 15)
@@ -203,7 +205,7 @@ MyDrone.prototype.update = function(currTime) {
 
   //Rotation
 
-  this.defaultAngle += this.lastRotation * deltaTime;
+  this.defaultAngle += this.lastRotation * deltaTime * this.scene.speed;
   this.defaultAngleY = this.defaultLeanAngle * (this.lastMotion / this.moveVel);
 
   this.lastTime = currTime;
@@ -244,8 +246,9 @@ MyDrone.prototype.display = function(){
 
         this.scene.translate(0,-0.1,0);
           this.scene.pushMatrix();
+            this.scene.translate(0.0, 1.0, 0.0);
 
-            this.scene.rotate(-Math.PI/2,1,0,0);
+            this.scene.rotate(Math.PI/2,1,0,0);
             this.scene.scale(0.5,0.5,0.5);
             this.circle.display(); //BODY BASE
           this.scene.popMatrix();

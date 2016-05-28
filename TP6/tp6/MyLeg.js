@@ -11,9 +11,6 @@ function MyLeg(scene) {
 
    this.scene.pushMatrix();
 
-
-
-
          this.scene.pushMatrix();
 
             this.scene.translate(0,0,0.3);
