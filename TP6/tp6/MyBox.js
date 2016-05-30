@@ -7,12 +7,13 @@ function MyBox(scene, x, y, z, size) {
   
   CGFobject.call(this,scene);
 
-  this.box = new MyUnitCubeQuad(this.scene, 0, 1, 0, 1);
+  this.box = new MyUnitCubeQuad(scene, 0, 1, 0, 1);
   this.x = x;
   this.y = y;
   this.z = z;
 
   this.size = size;
+  this.onTarget = false;
 
 };
 
@@ -24,7 +25,10 @@ MyBox.prototype.display = function() {
   this.scene.pushMatrix();
   this.scene.translate(this.x, this.y, this.z);
   this.scene.scale(this.size, this.size, this.size);
-  this.scene.boxAppearance.apply();
+  if(this.scene.drone.cable.transporting)
+    this.scene.targetAppearance.apply();
+  else this.scene.boxAppearance.apply();
+  //console.log(this.scene.drone.cable.transporting);
   this.box.display();
   this.scene.popMatrix();
 
@@ -34,7 +38,6 @@ MyBox.prototype.scenePosition = function() {  //ex 6.4
   var position = [this.x, this.y, this.z];
 
   return position;
-
 }
 
 MyBox.prototype.moveY = function(displacementY) {

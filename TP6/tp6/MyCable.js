@@ -36,10 +36,20 @@ MyCable.prototype.update = function(currTime){
     return;
   }
 
+
   if(this.scene.drone.caught()){
     //this.transporting = true;
     this.picks++;
   }
+
+  if(!this.scene.box.onTarget){
+    if(this.scene.drone.drop()){
+      //this.transporting = false;
+      this.scene.box.x = this.scene.target.x;
+      this.scene.box.y = this.scene.target.y;
+      this.scene.box.z = this.scene.target.z;
+    }
+}
   
   this.elevationSpeed = this.scene.speed;   //link to gui slider
 

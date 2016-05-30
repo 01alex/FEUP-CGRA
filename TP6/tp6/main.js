@@ -23,9 +23,10 @@ serialInclude([
 	'MyHelix.js',
 	'MyClosedCylinder.js',
 	'MyArc.js',
-  'MyCable.js',
-  'MyHook.js',
+  	'MyCable.js',
+  	'MyHook.js',
 	'MyBox.js',
+	'Target.js',
 
 	main=function() {
 		var app = new CGFapplication(document.body);

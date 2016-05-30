@@ -33,23 +33,21 @@ LightingScene.prototype.init = function(application) {
 	this.table = new MyTable(this);
 	this.wall = new Plane(this);
 	this.leftWall = new MyQuad(this, -1, 2, -0.5, 1.5);
+	this.dogWall = new MyQuad(this, 0, 1, 0, 1);
 	this.floor = new MyQuad(this, 0, 10, 0, 12);
 	this.boardA = new Plane(this,-0.17, 1.3, 0.1, 0.8, BOARD_A_DIVISIONS);
 	this.boardB = new Plane(this,0, 1, 0, 1, BOARD_B_DIVISIONS);
 	this.prism = new MyPrism(this, 8, 20);
 	this.cylinder = new MyCylinder(this,8,20, 2, 5);
 	this.box = new MyBox(this, 4, 4.15, 7.5, 1);
-	//	this.cylinder = new MyClosedCylinder(this, 8, 20, 2, 5);
-
+	this.target = new Target(this, 12, 4.15, 7.5, 1);
 	//this.lamp = new MyLamp(this, 25, 19);
 	this.clock = new MyClock(this, 12, 1);
 	this.paperPlane = new MyPaperPlane(this, 12, 8);
 	this.drone = new MyDrone(this, 10,3.825,8, -180);
-	//this.drone = new MyDrone(this, 10,10,10, -180);
 
 	this.droneAppearanceList = ['Drone1', 'Drone2', 'Drone3'];
-	this.currDroneAppearance = 0;
-
+	this.currDroneAppearance = 'Drone1';
 
 	// Materials
 	this.materialDefault = new CGFappearance(this);
@@ -148,13 +146,10 @@ LightingScene.prototype.init = function(application) {
 	this.steelAppearance.loadTexture("../resources/images/steel.png");
 
 	this.boxAppearance = new CGFappearance(this);
-	/*this.boxAppearance.setDiffuse(0.2,0.2,0.2,1);
-	this.boxAppearance.setSpecular(0.5,0.5,0.5,1);
-	this.boxAppearance.setShininess(60);*/
-	this.boxAppearance.loadTexture("../resources/images/cargo.png");
+	this.boxAppearance.loadTexture("../resources/images/box.png");
 
-	this.boxCaughtAppearance = new CGFappearance(this);
-	this.boxCaughtAppearance.loadTexture("../resources/images/clock.png");
+	this.targetAppearance = new CGFappearance(this);
+	this.targetAppearance.loadTexture("../resources/images/cargo.png");
 
 	this.handAppearance = new CGFappearance(this);
 	this.handAppearance.setDiffuse(0.05,0.05,0.05,1);
@@ -162,7 +157,7 @@ LightingScene.prototype.init = function(application) {
 
 	this.setUpdatePeriod(10);
 
-	this.speed = 1.0;
+	this.speed = 3.0;
 	this.Helix_Rot_Factor = 1;
 
 };
@@ -308,12 +303,12 @@ LightingScene.prototype.display = function() {
 	this.popMatrix();
 
 	this.doggoAppearance.apply();
-	// Left Wall
+	// Dog Wall
 	this.pushMatrix();
 	this.translate(-17.4, 10, 7.5);
 	this.rotate(90 * degToRad, 0, 1, 0);
 	this.scale(50, 20, 0.2);
-	this.leftWall.display();
+	this.dogWall.display();
 	this.popMatrix();
 
 	this.materialWall.apply();
@@ -333,11 +328,15 @@ LightingScene.prototype.display = function() {
 	this.leftWall.display();
 	this.popMatrix();
 
-	//Cargo
-	this.pushMatrix();
+	//Box
+	this.pushMatrix();	
 	this.box.display();
 	this.popMatrix();
 
+	//Target
+	this.pushMatrix();
+	this.target.display();
+	this.popMatrix();
 
 	// First Table
 	this.pushMatrix();

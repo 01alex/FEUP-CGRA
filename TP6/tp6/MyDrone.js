@@ -4,9 +4,9 @@ function MyDrone(scene, x, y, z, angle) {
 
   CGFobject.call(this,scene);
 
-  this.leftDroneArm = new MyArm(scene);
-  this.rightDroneArm = new MyArm(scene);
-  this.bodyDrone = new MyLamp (scene, 10, 5, 1, 1);
+  this.movementArm = new MyArm(scene, true);   //movement
+  this.rotationArm = new MyArm(scene, false);
+  this.bodyDrone = new MyLamp(scene, 10, 5, 1, 1);
   this.circle = new MyCircle(scene, 10);
   this.leg = new MyLeg(scene, 10, 10);
   this.base = new MyUnitCubeQuad(scene);
@@ -138,6 +138,25 @@ MyDrone.prototype.caught = function(){
         if(!this.cable.transporting){
           console.log("In touch!");
           this.cable.transporting = true;
+          this.scene.box.onTarget = false;
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
+MyDrone.prototype.drop = function(){
+
+   if(this.x < this.scene.target.x + this.scene.target.size && this.x > this.scene.target.x - this.scene.target.size) {
+    if(this.getHookY() < this.scene.target.y + this.scene.target.size && this.getHookY() > this.scene.target.y - this.scene.target.size) {
+      if(this.z < this.scene.target.z + this.scene.target.size && this.z > this.scene.target.z - this.scene.target.size) {
+        if(this.cable.transporting){
+          console.log("Droping!");
+          this.cable.transporting = false;
+          this.scene.box.onTarget = true;
           return true;
         }
       }
@@ -154,37 +173,37 @@ MyDrone.prototype.update = function(currTime) {
     return;
   }
 
-  this.rightDroneArm.update(currTime);
-  this.leftDroneArm.update(currTime);
+  this.rotationArm.update(currTime);
+  this.movementArm.update(currTime);
 
   this.heliceFactor = this.scene.Helix_Rot_Factor;
 
   var deltaTime = (currTime - this.lastTime) / 1000;
 
   if(this.motion > 0){
-    this.rightDroneArm.setVel1( this.heliceVeloL * this.heliceFactor);
-    this.rightDroneArm.setVel2( this.heliceVeloR * this.heliceFactor);
+    this.rotationArm.setVel1( this.heliceVeloL * this.heliceFactor);
+    this.rotationArm.setVel2( this.heliceVeloR * this.heliceFactor);
   }else if( this.motion < 0){
-    this.rightDroneArm.setVel1( this.heliceVeloR * this.heliceFactor);
-    this.rightDroneArm.setVel2( this.heliceVeloL * this.heliceFactor);
+    this.rotationArm.setVel1( this.heliceVeloR * this.heliceFactor);
+    this.rotationArm.setVel2( this.heliceVeloL * this.heliceFactor);
   }else{
-    this.rightDroneArm.setVel1( this.heliceVeloN  * this.heliceFactor);
-    this.rightDroneArm.setVel2( this.heliceVeloN * this.heliceFactor);
+    this.rotationArm.setVel1( this.heliceVeloN  * this.heliceFactor);
+    this.rotationArm.setVel2( this.heliceVeloN * this.heliceFactor);
   }
 
   if(this.rotation > 0){
-    this.leftDroneArm.setVel1( this.heliceVeloR * this.heliceFactor);
-    this.leftDroneArm.setVel2( this.heliceVeloR * this.heliceFactor);
-    this.rightDroneArm.setVel1( this.heliceVeloL * this.heliceFactor);
-    this.rightDroneArm.setVel2( this.heliceVeloL * this.heliceFactor);
+    this.movementArm.setVel1( this.heliceVeloR * this.heliceFactor);
+    this.movementArm.setVel2( this.heliceVeloR * this.heliceFactor);
+    this.rotationArm.setVel1( this.heliceVeloL * this.heliceFactor);
+    this.rotationArm.setVel2( this.heliceVeloL * this.heliceFactor);
   }else if( this.rotation < 0){
-    this.leftDroneArm.setVel1( this.heliceVeloL * this.heliceFactor);
-    this.leftDroneArm.setVel2( this.heliceVeloL * this.heliceFactor);
-    this.rightDroneArm.setVel1( this.heliceVeloR * this.heliceFactor);
-    this.rightDroneArm.setVel2( this.heliceVeloR * this.heliceFactor);
+    this.movementArm.setVel1( this.heliceVeloL * this.heliceFactor);
+    this.movementArm.setVel2( this.heliceVeloL * this.heliceFactor);
+    this.rotationArm.setVel1( this.heliceVeloR * this.heliceFactor);
+    this.rotationArm.setVel2( this.heliceVeloR * this.heliceFactor);
   }else{
-    this.leftDroneArm.setVel1( this.heliceVeloN * this.heliceFactor);
-    this.leftDroneArm.setVel2( this.heliceVeloN * this.heliceFactor);
+    this.movementArm.setVel1( this.heliceVeloN * this.heliceFactor);
+    this.movementArm.setVel2( this.heliceVeloN * this.heliceFactor);
   }
 
   this.lastAngle += (this.defaultAngle - this.lastAngle) * deltaTime;
@@ -226,35 +245,41 @@ MyDrone.prototype.update = function(currTime) {
   //if(this.caught())
     //this.scene.box.update();
     
-    if(this.cable.transporting){
-      this.scene.box.z = this.z;
-      this.scene.box.x = this.x;
-      this.scene.box.y = this.y - this.cable.height;
-    }
+  if(this.cable.transporting){
+    this.scene.box.x = this.x;
+    this.scene.box.y = this.y - this.cable.height;
+    this.scene.box.z = this.z;
+  }
+
+ /* if(this.drop()){
+    this.scene.box.x = this.scene.target.x;
+    this.scene.box.y = this.scene.target.y;
+    this.scene.box.z = this.scene.target.z;
+  }*/
 
     this.cable.update(currTime);
 
     this.lastTime = currTime;
 
-  }
+}
 
 
-  MyDrone.prototype.display = function(){
+MyDrone.prototype.display = function(){
 
-    this.armAppearanceList[this.ApIndex].apply();
+  this.armAppearanceList[this.ApIndex].apply();
     
   this.scene.pushMatrix();  //DRAW ARM (RIGHT)
 
   this.scene.translate(this.x,this.y,this.z);
   this.scene.rotate(this.defaultAngle*degToRad, 0,1,0);
   this.scene.rotate(this.defaultAngleY, 1,0,0);
-  this.rightDroneArm.display();
+  this.rotationArm.display();
 
 
   this.scene.pushMatrix(); //DRAW LEFT ARM
 
   this.scene.rotate(Math.PI/2 , 0 , 1 ,0);
-  this.leftDroneArm.display();
+  this.movementArm.display();
   this.scene.popMatrix();
   this.scene.pushMatrix();
 
@@ -265,7 +290,7 @@ MyDrone.prototype.update = function(currTime) {
   this.scene.steelAppearance.apply();
   this.cable.display();
   this.scene.popMatrix();
-  this.scene.translate(0.0, 1.0, 0.0);
+  this.scene.translate(0.0, 0.5, 0.0);
   this.scene.rotate(Math.PI/2,1,0,0);
   this.scene.scale(0.5,0.5,0.5);
   this.circle.display(); //BODY BASE
