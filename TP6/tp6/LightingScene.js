@@ -38,7 +38,8 @@ LightingScene.prototype.init = function(application) {
 	this.boardB = new Plane(this,0, 1, 0, 1, BOARD_B_DIVISIONS);
 	this.prism = new MyPrism(this, 8, 20);
 	this.cylinder = new MyCylinder(this,8,20, 2, 5);
-//	this.cylinder = new MyClosedCylinder(this, 8, 20, 2, 5);
+	this.box = new MyBox(this, 4, 4.15, 7.5, 1);
+	//	this.cylinder = new MyClosedCylinder(this, 8, 20, 2, 5);
 
 	//this.lamp = new MyLamp(this, 25, 19);
 	this.clock = new MyClock(this, 12, 1);
@@ -108,6 +109,22 @@ LightingScene.prototype.init = function(application) {
 	this.slidesAppearance.setShininess(5);
 	this.slidesAppearance.loadTexture("../resources/images/slides.png");
 
+	this.doggoAppearance = new CGFappearance(this);
+	this.doggoAppearance.setAmbient(0.25,0.25,0.25,1);
+	this.doggoAppearance.setDiffuse(0.75,0.75,0.75,1);
+	this.doggoAppearance.setSpecular(0.25,0.25,0.25,1);
+	this.doggoAppearance.setShininess(5);
+	this.doggoAppearance.loadTexture("../resources/images/doge.png");
+
+	this.grassAppearance = new CGFappearance(this);
+	this.grassAppearance.setAmbient(0.25,0.25,0.25,1);
+	this.grassAppearance.setDiffuse(0.75,0.75,0.75,1);
+	this.grassAppearance.setSpecular(0.25,0.25,0.25,1);
+	this.grassAppearance.setShininess(5);
+	this.grassAppearance.loadTexture("../resources/images/grass.png");
+
+
+
 	this.boardAppearance = new CGFappearance(this);
 	this.boardAppearance.setAmbient(0.25,0.25,0.25,1);
 	this.boardAppearance.setDiffuse(0.85,0.85,0.85,1);
@@ -127,15 +144,25 @@ LightingScene.prototype.init = function(application) {
 	this.clockAppearance.setShininess(60);
 	this.clockAppearance.loadTexture("../resources/images/clock.png");
 
+	this.steelAppearance = new CGFappearance(this);
+	this.steelAppearance.loadTexture("../resources/images/steel.png");
+
+	this.boxAppearance = new CGFappearance(this);
+	/*this.boxAppearance.setDiffuse(0.2,0.2,0.2,1);
+	this.boxAppearance.setSpecular(0.5,0.5,0.5,1);
+	this.boxAppearance.setShininess(60);*/
+	this.boxAppearance.loadTexture("../resources/images/cargo.png");
+
+	this.boxCaughtAppearance = new CGFappearance(this);
+	this.boxCaughtAppearance.loadTexture("../resources/images/clock.png");
+
 	this.handAppearance = new CGFappearance(this);
 	this.handAppearance.setDiffuse(0.05,0.05,0.05,1);
 	this.handAppearance.setShininess(120);
 
 	this.setUpdatePeriod(10);
 
-	//this.option1 = true;
-	//this.option2 = false;
-	this.speed = 3;
+	this.speed = 1.0;
 	this.Helix_Rot_Factor = 1;
 
 };
@@ -200,9 +227,6 @@ LightingScene.prototype.initLights = function() {
 	this.lights[4].enable();
 
 
-
-
-
 	for (var i = 0; i < 5; i++){
 		this.lights[i].enable();
 		this.lights[i].setVisible(true);
@@ -263,7 +287,7 @@ LightingScene.prototype.display = function() {
 	// ---- BEGIN Primitive drawing section
 
 
-//-----------Columns-------------------------------
+	//-----------Columns-------------------------------
 	// Floor
 	this.floorAppearance.apply();
 	this.pushMatrix();
@@ -271,6 +295,25 @@ LightingScene.prototype.display = function() {
 	this.rotate(-90 * degToRad, 1, 0, 0);
 	this.scale(15, 15, 0.2);
 	this.floor.display();
+	this.popMatrix();
+
+	//Grass
+
+	this.grassAppearance.apply();
+	this.pushMatrix();
+	this.translate(7.5, -0.1, 7.5);
+	this.rotate(-90 * degToRad, 1, 0, 0);
+	this.scale(50, 50, 0.2);
+	this.floor.display();
+	this.popMatrix();
+
+	this.doggoAppearance.apply();
+	// Left Wall
+	this.pushMatrix();
+	this.translate(-17.4, 10, 7.5);
+	this.rotate(90 * degToRad, 0, 1, 0);
+	this.scale(50, 20, 0.2);
+	this.leftWall.display();
 	this.popMatrix();
 
 	this.materialWall.apply();
@@ -289,6 +332,12 @@ LightingScene.prototype.display = function() {
 	this.scale(15, 8, 0.2);
 	this.leftWall.display();
 	this.popMatrix();
+
+	//Cargo
+	this.pushMatrix();
+	this.box.display();
+	this.popMatrix();
+
 
 	// First Table
 	this.pushMatrix();
@@ -322,18 +371,18 @@ LightingScene.prototype.display = function() {
 
 	//Colunas
 	this.pushMatrix();
-		this.translate(1,0,1);
-		this.rotate(-(Math.PI/2.0),1,0,0);
-		this.stoneAppearance.apply();
-		this.scale(1,1,8);
+	this.translate(1,0,1);
+	this.rotate(-(Math.PI/2.0),1,0,0);
+	this.stoneAppearance.apply();
+	this.scale(1,1,8);
 
-		this.cylinder.display();
+	this.cylinder.display();
 
-		this.translate(0,-13,0);
-		this.cylinder.display();
+	this.translate(0,-13,0);
+	this.cylinder.display();
 
-		this.translate(13,0,0);
-		this.cylinder.display();
+	this.translate(13,0,0);
+	this.cylinder.display();
 	this.popMatrix();
 
 	//Relogio
@@ -347,15 +396,15 @@ LightingScene.prototype.display = function() {
 	this.materialMetal.apply();
 	this.pushMatrix();
 	this.translate(this.paperPlane.xTranslation,
-		 this.paperPlane.yTranslation,
-		 this.paperPlane.zTranslation);
+		this.paperPlane.yTranslation,
+		this.paperPlane.zTranslation);
 	this.rotate(this.paperPlane.rotZ * degToRad, 0, 0, 1);
 	this.rotate(this.paperPlane.rotX * degToRad, 1, 0, 0);
 	this.paperPlane.display();
 	this.popMatrix();
 
 	//Drone
-//	this.droneAppearance.apply();
+	//	this.droneAppearance.apply();
 	this.drone.display();
 
 
@@ -370,29 +419,14 @@ LightingScene.prototype.update = function(currTime){
 
 	this.paperPlane.update(currTime);
 
-
-
-	if (this.currDroneAppearance == 'Drone1')
-	{
+	if(this.currDroneAppearance == 'Drone1')
 		this.drone.ApIndex = 0;
-	//	this.robot.wheel.ApIndex = 0;
-		//this.robot.leftArm.ApIndex = 0;
-	//	this.robot.rightArm.ApIndex = 0;
-	}
-	if (this.currDroneAppearance == 'Drone2')
-	{
+	
+	if(this.currDroneAppearance == 'Drone2')
 		this.drone.ApIndex = 1;
-	//	this.robot.wheel.ApIndex = 1;
-	//	this.robot.leftArm.ApIndex = 1;
-	//	this.robot.rightArm.ApIndex = 1;
-	}
-	if (this.currDroneAppearance == 'Drone3')
-	{
+
+	if(this.currDroneAppearance == 'Drone3')
 		this.drone.ApIndex = 2;
-	//	this.robot.wheel.ApIndex = 2;
-	//	this.robot.leftArm.ApIndex = 2;
-	//	this.robot.rightArm.ApIndex = 2;
-	}
 
 	this.drone.update(currTime);
 

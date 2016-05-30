@@ -11,7 +11,7 @@ function MyClock(scene, slices, stacks){
 
 	this.hourHand = new MyClockHand(this.scene, 0.5, 0);		//yy
 
-
+	
 	this.minuteHand = new MyClockHand(this.scene, 0.7, 0);		//yy
 
 

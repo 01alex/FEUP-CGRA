@@ -4,13 +4,13 @@ function MyDrone(scene, x, y, z, angle) {
 
   CGFobject.call(this,scene);
 
-  this.leftDroneArm = new MyArm(scene, true);
-  this.rightDroneArm = new MyArm(scene, false);
+  this.leftDroneArm = new MyArm(scene);
+  this.rightDroneArm = new MyArm(scene);
   this.bodyDrone = new MyLamp (scene, 10, 5, 1, 1);
   this.circle = new MyCircle(scene, 10);
   this.leg = new MyLeg(scene, 10, 10);
   this.base = new MyUnitCubeQuad(scene);
-
+  this.cable = new MyCable(scene);
 
   //Initial Positions and Angles
   this.x = x;
@@ -107,7 +107,6 @@ function MyDrone(scene, x, y, z, angle) {
 
 };
 
-
 MyDrone.prototype = Object.create(CGFobject.prototype);
 MyDrone.prototype.constructor = MyDrone;
 
@@ -123,10 +122,32 @@ MyDrone.prototype.rotate = function(angle){
   this.rotation = angle * this.rotationVel;
 }
 
+MyDrone.prototype.moveCable = function(increment) {
+  this.cable.elevate(increment);
+}
+
+MyDrone.prototype.getHookY = function(){  //ex 6.2
+  return this.y - this.cable.height;
+}
+
+MyDrone.prototype.caught = function(){
+
+  if(this.x < this.scene.box.x + this.scene.box.size && this.x > this.scene.box.x - this.scene.box.size) {
+    if(this.getHookY() < this.scene.box.y + this.scene.box.size && this.getHookY() > this.scene.box.y - this.scene.box.size) {
+      if(this.z < this.scene.box.z + this.scene.box.size && this.z > this.scene.box.z - this.scene.box.size) {
+        if(!this.cable.transporting){
+          console.log("In touch!");
+          this.cable.transporting = true;
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
 
 MyDrone.prototype.update = function(currTime) {
-
-//this.shape.update(currTime);
 
   if(this.lastTime === 0) {
     this.lastTime = currTime;
@@ -141,30 +162,30 @@ MyDrone.prototype.update = function(currTime) {
   var deltaTime = (currTime - this.lastTime) / 1000;
 
   if(this.motion > 0){
-      this.rightDroneArm.setVel1( this.heliceVeloL * this.heliceFactor);
-      this.rightDroneArm.setVel2( this.heliceVeloR * this.heliceFactor);
-   }else if( this.motion < 0){
-      this.rightDroneArm.setVel1( this.heliceVeloR * this.heliceFactor);
-      this.rightDroneArm.setVel2( this.heliceVeloL * this.heliceFactor);
-   }else{
-     this.rightDroneArm.setVel1( this.heliceVeloN  * this.heliceFactor);
-      this.rightDroneArm.setVel2( this.heliceVeloN * this.heliceFactor);
-   }
+    this.rightDroneArm.setVel1( this.heliceVeloL * this.heliceFactor);
+    this.rightDroneArm.setVel2( this.heliceVeloR * this.heliceFactor);
+  }else if( this.motion < 0){
+    this.rightDroneArm.setVel1( this.heliceVeloR * this.heliceFactor);
+    this.rightDroneArm.setVel2( this.heliceVeloL * this.heliceFactor);
+  }else{
+    this.rightDroneArm.setVel1( this.heliceVeloN  * this.heliceFactor);
+    this.rightDroneArm.setVel2( this.heliceVeloN * this.heliceFactor);
+  }
 
-   if(this.rotation > 0){
-      this.leftDroneArm.setVel1( this.heliceVeloR * this.heliceFactor);
-      this.leftDroneArm.setVel2( this.heliceVeloR * this.heliceFactor);
-      this.rightDroneArm.setVel1( this.heliceVeloL * this.heliceFactor);
-      this.rightDroneArm.setVel2( this.heliceVeloL * this.heliceFactor);
-   }else if( this.rotation < 0){
-      this.leftDroneArm.setVel1( this.heliceVeloL * this.heliceFactor);
-      this.leftDroneArm.setVel2( this.heliceVeloL * this.heliceFactor);
-      this.rightDroneArm.setVel1( this.heliceVeloR * this.heliceFactor);
-      this.rightDroneArm.setVel2( this.heliceVeloR * this.heliceFactor);
-   }else{
-     this.leftDroneArm.setVel1( this.heliceVeloN * this.heliceFactor);
-     this.leftDroneArm.setVel2( this.heliceVeloN * this.heliceFactor);
-   }
+  if(this.rotation > 0){
+    this.leftDroneArm.setVel1( this.heliceVeloR * this.heliceFactor);
+    this.leftDroneArm.setVel2( this.heliceVeloR * this.heliceFactor);
+    this.rightDroneArm.setVel1( this.heliceVeloL * this.heliceFactor);
+    this.rightDroneArm.setVel2( this.heliceVeloL * this.heliceFactor);
+  }else if( this.rotation < 0){
+    this.leftDroneArm.setVel1( this.heliceVeloL * this.heliceFactor);
+    this.leftDroneArm.setVel2( this.heliceVeloL * this.heliceFactor);
+    this.rightDroneArm.setVel1( this.heliceVeloR * this.heliceFactor);
+    this.rightDroneArm.setVel2( this.heliceVeloR * this.heliceFactor);
+  }else{
+    this.leftDroneArm.setVel1( this.heliceVeloN * this.heliceFactor);
+    this.leftDroneArm.setVel2( this.heliceVeloN * this.heliceFactor);
+  }
 
   this.lastAngle += (this.defaultAngle - this.lastAngle) * deltaTime;
   this.lastMotion += (this.motion - this.lastMotion) * deltaTime;
@@ -175,161 +196,155 @@ MyDrone.prototype.update = function(currTime) {
 
   var tempX = Math.cos(-(this.defaultAngle - 90) * degToRad);
 
-
-//  console.log(this.defaultAngle);
-//  console.log(tempX);
-
-  var tempZ = Math.sin(-(this.defaultAngle-90) * degToRad);
-
-
+  var tempZ = Math.sin(-(this.defaultAngle - 90) * degToRad);
 
   this.x += tempX * this.lastMotion * deltaTime * this.scene.speed;
   if(this.x < 2)
-  this.x = 2;
+    this.x = 2;
   if(this.x > 30)
-  this.x = 30;
+    this.x = 30;
 
-//  console.log(this.x);
   this.y += this.totalElevation * deltaTime * this.scene.speed;
-
   if(this.y < 0.1)
-  this.y = 0.1;
-  if(this.y > 15)
-  this.y = 15;
+    this.y = 0.1;
+  if(this.y > 12)
+    this.y = 12;
 
   this.z += tempZ * this.lastMotion * deltaTime * this.scene.speed;
   if(this.z < 2)
-  this.z = 2;
+    this.z = 2;
   if(this.z > 15)
-  this.z = 15;
+    this.z = 15;
 
   //Rotation
 
   this.defaultAngle += this.lastRotation * deltaTime * this.scene.speed;
   this.defaultAngleY = this.defaultLeanAngle * (this.lastMotion / this.moveVel);
 
-  this.lastTime = currTime;
+  //Check if holds box
 
-}
+  //if(this.caught())
+    //this.scene.box.update();
+    
+    if(this.cable.transporting){
+      this.scene.box.z = this.z;
+      this.scene.box.x = this.x;
+      this.scene.box.y = this.y - this.cable.height;
+    }
+
+    this.cable.update(currTime);
+
+    this.lastTime = currTime;
+
+  }
 
 
-MyDrone.prototype.display = function(){
+  MyDrone.prototype.display = function(){
 
-  /*this.scene.pushMatrix();
+    this.armAppearanceList[this.ApIndex].apply();
+    
+  this.scene.pushMatrix();  //DRAW ARM (RIGHT)
 
-  this.scene.pushMatrix();
   this.scene.translate(this.x,this.y,this.z);
   this.scene.rotate(this.defaultAngle*degToRad, 0,1,0);
   this.scene.rotate(this.defaultAngleY, 1,0,0);
-  this.shape.display();
+  this.rightDroneArm.display();
+
+
+  this.scene.pushMatrix(); //DRAW LEFT ARM
+
+  this.scene.rotate(Math.PI/2 , 0 , 1 ,0);
+  this.leftDroneArm.display();
   this.scene.popMatrix();
+  this.scene.pushMatrix();
 
-  this.scene.popMatrix();*/
+  this.scene.translate(0,-0.1,0);
+  this.scene.pushMatrix();
 
-  this.armAppearanceList[this.ApIndex].apply();
-    this.scene.pushMatrix();
+  this.scene.pushMatrix();
+  this.scene.steelAppearance.apply();
+  this.cable.display();
+  this.scene.popMatrix();
+  this.scene.translate(0.0, 1.0, 0.0);
+  this.scene.rotate(Math.PI/2,1,0,0);
+  this.scene.scale(0.5,0.5,0.5);
+  this.circle.display(); //BODY BASE
+  this.scene.popMatrix();
+  this.scene.pushMatrix();
 
-
-      this.scene.translate(this.x,this.y,this.z);
-      this.scene.rotate(this.defaultAngle*degToRad, 0,1,0);
-      this.scene.rotate(this.defaultAngleY, 1,0,0);
-      this.rightDroneArm.display();
-
-
-      this.scene.pushMatrix(); //DRAW ONE ARM
-      //this.armAppearanceList[this.ApIndex].apply();
-        this.scene.rotate(Math.PI/2 , 0 , 1 ,0);
-        this.leftDroneArm.display();
-        this.scene.popMatrix();
-
-      this.scene.pushMatrix();
-
-        this.scene.translate(0,-0.1,0);
-          this.scene.pushMatrix();
-            this.scene.translate(0.0, 1.0, 0.0);
-
-            this.scene.rotate(Math.PI/2,1,0,0);
-            this.scene.scale(0.5,0.5,0.5);
-            this.circle.display(); //BODY BASE
-          this.scene.popMatrix();
-
-          this.scene.pushMatrix();
-
-        this.scene.rotate( -Math.PI / 2, 0,1,0);
-      this.scene.translate(0.2,-0.5,0);
-      this.leg.display();
+  this.scene.rotate( -Math.PI / 2, 0,1,0);
+  this.scene.translate(0.2,-0.5,0);
+  this.leg.display();
 
 
+  /*  this.scene.translate(-1,0,0);
 
-
-    /*  this.scene.translate(-1,0,0);
-
-      this.leg.display();*/
+  this.leg.display();*/
 
   this.scene.popMatrix();
 
   this.scene.pushMatrix();
 
-this.scene.rotate( -Math.PI / 2, 0,1,0);
-this.scene.translate(-0.2,-0.5,0);
-this.leg.display();
+  this.scene.rotate( -Math.PI / 2, 0,1,0);
+  this.scene.translate(-0.2,-0.5,0);
+  this.leg.display();
 
 
-this.scene.popMatrix();
+  this.scene.popMatrix();
 
-this.scene.pushMatrix();
+  this.scene.pushMatrix();
 
-this.scene.rotate( Math.PI / 2, 0,1,0);
-this.scene.translate(-0.2,-0.5,0);
-this.leg.display();
-
-
-this.scene.popMatrix();
-
-this.scene.pushMatrix();
-
-this.scene.rotate( Math.PI / 2, 0,1,0);
-this.scene.translate(0.2,-0.5,0);
-this.leg.display();
+  this.scene.rotate( Math.PI / 2, 0,1,0);
+  this.scene.translate(-0.2,-0.5,0);
+  this.leg.display();
 
 
-this.scene.popMatrix();
+  this.scene.popMatrix();
+
+  this.scene.pushMatrix();
+
+  this.scene.rotate( Math.PI / 2, 0,1,0);
+  this.scene.translate(0.2,-0.5,0);
+  this.leg.display();
 
 
-this.scene.pushMatrix();
-this.bodyAppearanceList[this.ApIndex].apply();
-this.scene.rotate( Math.PI / 2, 0,1,0);
-this.scene.translate(-0.2,-0.5,0);
-this.leg.display();
+  this.scene.popMatrix();
 
 
-this.scene.popMatrix();
-
-this.scene.pushMatrix();
-this.bodyAppearanceList[this.ApIndex].apply();
-this.scene.translate(-1, -0.5, 0);
-this.scene.scale(0.05,0.05,1);
-this.base.display();
-
-this.scene.popMatrix();
-
-this.scene.pushMatrix();
-this.bodyAppearanceList[this.ApIndex].apply();
-this.scene.translate(1, -0.5, 0);
-this.scene.scale(0.05,0.05,1);
-this.base.display();
-
-this.scene.popMatrix();
+  this.scene.pushMatrix();
+  this.bodyAppearanceList[this.ApIndex].apply();
+  this.scene.rotate( Math.PI / 2, 0,1,0);
+  this.scene.translate(-0.2,-0.5,0);
+  this.leg.display();
 
 
+  this.scene.popMatrix();
 
-          this.scene.pushMatrix();
-            this.bodyAppearanceList[this.ApIndex].apply();
+  this.scene.pushMatrix();
+  this.bodyAppearanceList[this.ApIndex].apply();
+  this.scene.translate(-1, -0.5, 0);
+  this.scene.scale(0.05,0.05,1);
+  this.base.display();
 
-            this.scene.scale(0.5,0.5,0.5);
-              this.bodyDrone.display(); //DRONE BODY
-        this.scene.popMatrix();
-      this.scene.popMatrix();
-    this.scene.popMatrix();
+  this.scene.popMatrix();
+
+  this.scene.pushMatrix();
+  this.bodyAppearanceList[this.ApIndex].apply();
+  this.scene.translate(1, -0.5, 0);
+  this.scene.scale(0.05,0.05,1);
+  this.base.display();
+
+  this.scene.popMatrix();
+
+
+
+  this.scene.pushMatrix();
+  this.bodyAppearanceList[this.ApIndex].apply();
+
+  this.scene.scale(0.5,0.5,0.5);
+  this.bodyDrone.display(); //DRONE BODY
+  this.scene.popMatrix();
+  this.scene.popMatrix();
+  this.scene.popMatrix();
 
 }
